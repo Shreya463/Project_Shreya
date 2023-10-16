@@ -1015,18 +1015,19 @@ elif option=='Graphical data':
             show_bar=st.checkbox("Barchart",False)
             app_counts=dts2.faculty_app(self.df)
             if show_bar:
-                st.subheader("Interactive Altair Pie Chart - Distribution of Appointment Types")
+                st.subheader("Interactive Altair Bar Chart - Distribution of Appointment Types")
                 data = app_counts.rename(columns={'Appointment Type': 'category', 'Count': 'count'})
-                pie_chart = alt.Chart(data).mark_arc().encode(
-                    color=alt.Color('category:N', legend=None),
-                    tooltip=['category:N', 'count:Q']
+                bar_chart = alt.Chart(data).mark_bar().encode(
+                    x=alt.X('category:N', sort='-y'),
+                    y=alt.Y('sum(count):Q'),
+                    tooltip=['category:N', 'sum(count):Q']
                 ).properties(
-                    width=300,
+                    width=600,
                     height=300
-                ).interactive()   
-                st.altair_chart(pie_chart, use_container_width=True)
+                ).interactive()
+                st.altair_chart(bar_chart, use_container_width=True)
             if show_pie:
-                st.subheader("Static Pie Chart (Matplotlib and Seaborn) - Distribution of Appointment Types")
+                st.subheader(" Distribution of Appointment Types")
                 plt.figure(figsize=(5, 5))
                 colors = sns.color_palette('bright')
                 plt.pie(app_counts['Count'], labels=app_counts['Appointment Type'], autopct='%1.1f%%', startangle=90, colors=colors)
