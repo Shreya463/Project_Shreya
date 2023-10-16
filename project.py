@@ -988,24 +988,52 @@ elif option=='Graphical data':
 
         def faculty_pg_plot(self):
             pg1_counts=dts2.faculty_pg(self.df)
-            sns.set_style('whitegrid')
-            plt.figure(figsize=(1.7, 1.7))
-            colors = sns.color_palette('bright')
-            plt.pie(pg1_counts['Count'], labels=pg1_counts['PG'], autopct='%1.1f%%', startangle=90, colors=colors)
-            plt.title('Post Graduate-Faculty')
-            plt.axis('equal')
-            st.pyplot(plt)
+            show_pie=st.checkbox("Piechart",False)
+            show_bar=st.checkbox("Barchart",False)
+            if show_pie:
+                sns.set_style('whitegrid')
+                plt.figure(figsize=(1.7, 1.7))
+                colors = sns.color_palette('bright')
+                plt.pie(pg1_counts['Count'], labels=pg1_counts['PG'], autopct='%1.1f%%', startangle=90, colors=colors)
+                plt.title('Post Graduate-Faculty')
+                plt.axis('equal')
+                st.pyplot(plt)
+            if show_bar:
+                st.subheader("Interactive Altair Bar Chart - Post Graduate Faculty")
+                data = pg1_counts.rename(columns={'PG': 'category', 'Count': 'count'})
+                bar_chart = alt.Chart(data).mark_bar().encode(
+                    x=alt.X('category:N', sort='-y'),
+                    y=alt.Y('count:Q'),
+                    tooltip=['category:N', 'count:Q']
+                ).properties(
+                    width=600,
+                    height=300
+                ).interactive()
+                st.altair_chart(bar_chart, use_container_width=True)
         def faculty_app_plot(self):
+            show_pie=st.checkbox("Piechart",False)
+            show_bar=st.checkbox("Barchart",False)
             app_counts=dts2.faculty_app(self.df)
-            sns.set_style('whitegrid')
-            plt.figure(figsize=(3,3))
-            sns.histplot(data=app_counts, x='Appointment Type', weights='Count', kde=False, color='blue')
-            plt.title('Distribution of Appointment Types')
-            plt.xlabel('Appointment Type')
-            plt.ylabel('Count')
-            plt.xticks(rotation=45, ha='center')
-            st.pyplot(plt)
-
+            if show_pie:
+                st.subheader(" Distribution of Appointment Types")
+                plt.figure(figsize=(5, 5))
+                colors = sns.color_palette('bright')
+                plt.pie(app_counts['Count'], labels=app_counts['Appointment Type'], autopct='%1.1f%%', startangle=90, colors=colors)
+                plt.title('Distribution of Appointment Types')
+                plt.axis('equal')
+                st.pyplot(plt)
+            if show_bar:
+                st.subheader(" Distribution of Appointment Types")
+                data = app_counts.rename(columns={'Appointment Type': 'category', 'Count': 'count'})
+                bar_chart = alt.Chart(data).mark_bar().encode(
+                    x=alt.X('category:N', sort='-y'),
+                    y=alt.Y('sum(count):Q'),
+                    tooltip=['category:N', 'sum(count):Q']
+                ).properties(
+                    width=600,
+                    height=300
+                ).interactive()
+                st.altair_chart(bar_chart, use_container_width=True)
         def faculty_designation_plot(self):
             des_counts=dts2.faculty_designation(self.df)
             sns.set_style('whitegrid')
